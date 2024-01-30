@@ -1,7 +1,7 @@
 from .test_recipe_base import RecipeTestBase
 from django.core.exceptions import ValidationError
 from parameterized import parameterized
-from recipe import models
+from recipes import models
 
 
 class RecipeModelTest(RecipeTestBase):
@@ -11,8 +11,8 @@ class RecipeModelTest(RecipeTestBase):
 
     def make_recipe_no_defaults(self):
         recipe = models.Recipe(
-            category_data=self.make_category(name="test_default_category"),
-            author_data=self.make_author(username="newuser_"),
+            category=self.make_category(name="test_default_category"),
+            author=self.make_author(username="newuser_"),
             title='Recipe Title',
             description='Recipe Description',
             slug='recipe-slug',
@@ -36,12 +36,12 @@ class RecipeModelTest(RecipeTestBase):
 
     @parameterized.expand([
         ('title', 65),
-        ('description', 65),
+        ('description', 175),
         ('preparation_time_unit', 65),
         ('servings_unit', 65)
     ])
     def test_recipe_fields_max_length(self, field, max_length):
-        setattr(self.recipe, field, 'A' * (max_length + 1))
+        setattr(self.recipe, field, 'A' * (max_length + 5))
         with self.assertRaises(ValidationError):
             self.recipe.full_clean()
 
@@ -58,3 +58,14 @@ class RecipeModelTest(RecipeTestBase):
         recipe.save()
         self.assertFalse(recipe.preparation_steps_is_html,
                          msg="Recipe is_published is not False")
+        
+    def test_recipe_string_representation(self):
+        needed = 'Testing Representation'
+        self.recipe.title = 'Testing Representation'
+        self.recipe.full_clean()
+        self.recipe.save()
+        self.assertEqual(
+            str(self.recipe),
+            needed,
+            msg='Recipe string representation must be "{needed}"'
+        )
