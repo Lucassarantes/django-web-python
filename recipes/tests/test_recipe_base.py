@@ -1,6 +1,7 @@
 from django.test import TestCase
 from recipes import models
 
+
 class RecipeTestBase(TestCase):
     def setUp(self) -> None:
         return super().setUp()
