@@ -5,11 +5,11 @@ from django.http import Http404
 from utils.pagination import make_pagination
 import os
 
-PER_PAGES = os.environ.get('OER_PAGE', 6)
+PER_PAGE = os.environ.get('PER_PAGE', 6)
 
 def home(request):
     recipes = Recipe.objects.filter(is_published=True).order_by('-id')
-    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGES)
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
     
     return render(request, 'recipes/pages/home.html', context= {
         'recipes': page_obj,
@@ -23,7 +23,7 @@ def category(request, category_id):
         ).order_by('-id')
     )
 
-    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGES)
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
     
     return render(request, 'recipes/pages/category.html', context={
         'recipes': page_obj,
